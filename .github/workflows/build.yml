@@ -65,6 +65,17 @@ jobs:
           echo "Actual Gradle version:"
           ./gradlew --version 2>&1 | head -5 || echo "No gradlew yet"
 
+      - name: Decode Debug Keystore
+        run: |
+          if [ -f debug.keystore.base64 ]; then
+            echo "Decoding debug.keystore from base64..."
+            base64 -d debug.keystore.base64 > debug.keystore
+            echo "debug.keystore created successfully."
+          else
+            echo "Warning: debug.keystore.base64 file not found! Generating a generic one..."
+            keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          fi
+
       - name: Build APK with full error capture
         id: build
         continue-on-error: true
