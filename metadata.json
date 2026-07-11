@@ -1,0 +1,6 @@
+{
+  "name": "Focus Shield",
+  "description": "Foydalanuvchi dars yoki ish qilayotgan vaqtida o'zi tanlagan chalg'ituvchi ilovalarni bloklash orqali uning diqqatini oshirishga yordam beruvchi ilova.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
