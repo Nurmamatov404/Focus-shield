@@ -72,9 +72,6 @@ class FocusAccessibilityService : AccessibilityService() {
 
         // 2. Block user specified apps
         if (state.blockedApps.contains(packageName)) {
-            // Instantly return to Home Screen
-            performGlobalAction(GLOBAL_ACTION_HOME)
-            
             // Start lock warning screen inside Focus Shield
             showBlockOverlayScreen("Siz hozir darsdasiz. Chalg'imang!")
         }
