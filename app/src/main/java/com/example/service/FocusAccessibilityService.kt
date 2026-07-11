@@ -37,8 +37,10 @@ class FocusAccessibilityService : AccessibilityService() {
 
         // 0. NEVER block our own application or system/launcher interfaces to prevent infinite loops
         val ourPackage = applicationContext.packageName
+        val defaultLauncher = getDefaultLauncherPackage()
         if (packageName == ourPackage || 
             packageName == "com.example" || 
+            packageName == defaultLauncher ||
             packageName == "com.android.launcher" || 
             packageName.contains("launcher") || 
             packageName.contains("systemui") ||
@@ -72,6 +74,8 @@ class FocusAccessibilityService : AccessibilityService() {
 
         // 2. Block user specified apps
         if (state.blockedApps.contains(packageName)) {
+            // Redirect immediately to Home screen to exit the blocked app
+            performGlobalAction(GLOBAL_ACTION_HOME)
             // Start lock warning screen inside Focus Shield
             showBlockOverlayScreen("Siz hozir darsdasiz. Chalg'imang!")
         }
@@ -88,6 +92,14 @@ class FocusAccessibilityService : AccessibilityService() {
         } catch (e: Exception) {
             Log.e(TAG, "Could not launch block MainActivity", e)
         }
+    }
+
+    private fun getDefaultLauncherPackage(): String? {
+        val intent = Intent(Intent.ACTION_MAIN).apply {
+            addCategory(Intent.CATEGORY_HOME)
+        }
+        val resolveInfo = packageManager.resolveActivity(intent, android.content.pm.PackageManager.MATCH_DEFAULT_ONLY)
+        return resolveInfo?.activityInfo?.packageName
     }
 
     override fun onInterrupt() {

@@ -75,5 +75,6 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         // Refresh installed apps checklist in case changes occurred in the background
         viewModel.refreshInstalledApps()
+        viewModel.updatePermissionStatuses()
     }
 }

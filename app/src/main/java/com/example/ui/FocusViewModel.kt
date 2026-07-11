@@ -83,9 +83,21 @@ class FocusViewModel(
     private val _rebootAutoStart = MutableStateFlow(true)
     val rebootAutoStart: StateFlow<Boolean> = _rebootAutoStart.asStateFlow()
 
+    private val _isAccessibilityServiceEnabled = MutableStateFlow(false)
+    val isAccessibilityServiceEnabled: StateFlow<Boolean> = _isAccessibilityServiceEnabled.asStateFlow()
+
+    private val _isOverlayPermissionEnabled = MutableStateFlow(false)
+    val isOverlayPermissionEnabled: StateFlow<Boolean> = _isOverlayPermissionEnabled.asStateFlow()
+
+    fun updatePermissionStatuses() {
+        _isAccessibilityServiceEnabled.value = com.example.service.FocusAccessibilityService.isServiceRunning
+        _isOverlayPermissionEnabled.value = android.provider.Settings.canDrawOverlays(context)
+    }
+
     init {
         loadSettings()
         refreshInstalledApps()
+        updatePermissionStatuses()
     }
 
     private fun loadSettings() {

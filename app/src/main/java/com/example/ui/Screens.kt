@@ -192,6 +192,8 @@ fun SleekDurationChip(
 @Composable
 fun HomeTab(viewModel: FocusViewModel) {
     val context = LocalContext.current
+    val isAccessibilityOn by viewModel.isAccessibilityServiceEnabled.collectAsState()
+    val isOverlayOn by viewModel.isOverlayPermissionEnabled.collectAsState()
     var lessonName by remember { mutableStateOf("") }
     
     // Duration in minutes
@@ -566,9 +568,6 @@ fun HomeTab(viewModel: FocusViewModel) {
 
         // Permission quick status warning (Only shown if permissions are missing)
         item {
-            val isAccessibilityOn = remember { FocusAccessibilityService.isServiceRunning }
-            val isOverlayOn = remember { Settings.canDrawOverlays(context) }
-            
             if (!isAccessibilityOn || (showWidgetOverlayToggle && !isOverlayOn)) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -649,7 +648,6 @@ fun HomeTab(viewModel: FocusViewModel) {
                     )
                 }
 
-                val isAccessibilityOn = remember { FocusAccessibilityService.isServiceRunning }
                 Text(
                     text = if (isAccessibilityOn) "MAXSUS IMKONIYATLAR XIZMATI YOQILGAN" else "MAXSUS IMKONIYATLAR XIZMATI O'CHIRILGAN",
                     style = MaterialTheme.typography.labelSmall.copy(
@@ -1508,8 +1506,8 @@ fun SettingsTab(viewModel: FocusViewModel) {
     val rebootAutoStart by viewModel.rebootAutoStart.collectAsState()
 
     // Permission statuses checked in real-time
-    var isAccessibilityOn by remember { mutableStateOf(FocusAccessibilityService.isServiceRunning) }
-    var isOverlayOn by remember { mutableStateOf(Settings.canDrawOverlays(context)) }
+    val isAccessibilityOn by viewModel.isAccessibilityServiceEnabled.collectAsState()
+    val isOverlayOn by viewModel.isOverlayPermissionEnabled.collectAsState()
     var isNotificationOn by remember {
         mutableStateOf(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -1550,12 +1548,6 @@ fun SettingsTab(viewModel: FocusViewModel) {
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
         isNotificationOn = granted
-    }
-
-    // Refresh permission statuses on launch or when screen loads
-    LaunchedEffect(Unit) {
-        isAccessibilityOn = FocusAccessibilityService.isServiceRunning
-        isOverlayOn = Settings.canDrawOverlays(context)
     }
 
     LazyColumn(
